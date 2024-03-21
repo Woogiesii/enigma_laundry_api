@@ -29,11 +29,11 @@ func GenerateTokenJwt(customerData model.Users, expiredAt int64) (string, error)
 			ExpiresAt: expiredAt,
 		},
 		CustomerData: model.UsersData{
-			Id:           customerData.Id,
-			CustomerName: customerData.CustomerName,
-			PhoneNumber:  customerData.PhoneNumber,
-			Username:     customerData.Username,
-			Role:         customerData.Role,
+			Id:          customerData.Id,
+			FullName:    customerData.FullName,
+			PhoneNumber: customerData.PhoneNumber,
+			Username:    customerData.Username,
+			Role:        customerData.Role,
 		},
 	}
 

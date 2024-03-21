@@ -58,12 +58,12 @@ func (cst *usersUseCase) CreateCustomer(payload dto.UsersRequestDto) (model.User
 		return model.Users{}, nil
 	}
 	newCustomers := model.Users{
-		Id:           payload.Id,
-		CustomerName: payload.CustomerName,
-		PhoneNumber:  payload.PhoneNumber,
-		Username:     payload.Username,
-		Password:     hashPassword,
-		Role:         payload.Role,
+		Id:          payload.Id,
+		FullName:    payload.FullName,
+		PhoneNumber: payload.PhoneNumber,
+		Username:    payload.Username,
+		Password:    hashPassword,
+		Role:        payload.Role,
 	}
 
 	customers, err := cst.repo.Create(newCustomers)
