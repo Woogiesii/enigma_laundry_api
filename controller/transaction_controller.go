@@ -9,6 +9,7 @@ import (
 	"enigma_laundry_api/utils/common"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,12 +41,42 @@ func (tx *TransactionController) loginHandler(ctx *gin.Context) {
 }
 
 func (tx *TransactionController) createHandler(ctx *gin.Context) {
-	var payload model.Transaction
+
+	var payload model.Transactionnotepochdate
+
+	//insert into temporary object
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
-	payloadResponse, err := tx.uc.RegisterTransaction(payload)
+
+	parsedDate, err := time.Parse("2006-01-02", payload.TransactionIn)
+	parsedDate2, err2 := time.Parse("2006-01-02", payload.TransactionOut)
+
+	if err != nil {
+		fmt.Println("Error parsing date in:", err)
+		return
+	}
+	if err2 != nil {
+		fmt.Println("Error parsing date out :", err2)
+		return
+	}
+
+	epochin := parsedDate.Unix()
+	epochout := parsedDate2.Unix()
+
+	newTransaction := model.Transaction{
+		Id:             payload.Id,
+		Users:          payload.Users,
+		Services:       payload.Services,
+		TransactionIn:  int(epochin),
+		TransactionOut: int(epochout),
+		Amount:         payload.Amount,
+		CreatedAt:      payload.CreatedAt,
+		UpdatedAt:      payload.UpdatedAt,
+	}
+
+	payloadResponse, err := tx.uc.RegisterTransaction(newTransaction)
 
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())

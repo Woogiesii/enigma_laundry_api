@@ -3,13 +3,13 @@ package dto
 import "time"
 
 type UsersRequestDto struct {
-	Id           string    `json:"id"`
-	CustomerName string    `json:"customer_name"`
-	PhoneNumber  string    `json:"phone_number"`
-	Username     string    `json:"username"`
-	Password     string    `json:"password"`
-	Role         string    `json:"role"`
-	DateCreated  time.Time `json:"date_created"`
+	Id          string    `json:"id"`
+	FullName    string    `json:"full_name"`
+	PhoneNumber string    `json:"phone_number"`
+	Username    string    `json:"username"`
+	Password    string    `json:"password"`
+	Role        string    `json:"role"`
+	DateCreated time.Time `json:"date_created"`
 }
 
 type LoginRequestDto struct {

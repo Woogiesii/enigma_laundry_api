@@ -25,8 +25,6 @@ func (t *transactionUseCase) RegisterTransaction(payload model.Transaction) (mod
 		CreatedAt:      payload.CreatedAt,
 		UpdatedAt:      payload.UpdatedAt,
 	}
-
-	fmt.Println(payload)
 	transaction, err := t.repo.Create(newTransaction)
 	if err != nil {
 		return model.Transaction{}, fmt.Errorf("failed to create services: %s", err.Error())
