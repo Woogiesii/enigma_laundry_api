@@ -3,6 +3,7 @@ package controller
 import (
 	"enigma_laundry_api/config"
 	"enigma_laundry_api/middleware"
+	"enigma_laundry_api/model"
 	"enigma_laundry_api/model/dto"
 	"enigma_laundry_api/usecase"
 	"enigma_laundry_api/utils/common"
@@ -58,11 +59,37 @@ func (cst *CustomersController) createHandler(ctx *gin.Context) {
 	common.SendCreateResponse(ctx, "OK", payloadResponse)
 }
 
+func (cst *CustomersController) updateHandler(ctx *gin.Context) {
+	var payload model.Users
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	payloadResponse, err := cst.uc.UpdateCustomer(payload)
+	if err != nil {
+		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	common.SendCreateResponse(ctx, "OK", payloadResponse)
+}
+
+func (cst *CustomersController) deleteHandler(ctx *gin.Context) {
+	id := ctx.Param("id")
+	response, err := cst.uc.DeleteCustomer(id)
+	if err != nil {
+		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	common.SendCreateResponse(ctx, "OK", response)
+}
+
 func (cst *CustomersController) Route() {
 	customersGroup := cst.rg.Group("/customers")
 	{
 		customersGroup.GET("/:id", common.JWTAuth("ADMIN", "USER"), cst.getHandler)
 		customersGroup.POST("", common.JWTAuth("ADMIN"), cst.createHandler)
+		customersGroup.PUT("", common.JWTAuth("ADMIN"), cst.updateHandler)
+		customersGroup.DELETE("/:id", common.JWTAuth("ADMIN"), cst.deleteHandler)
 		customersGroup.POST("/login", middleware.BasicAuth(cst.apiCfg), cst.loginHandler)
 	}
 }

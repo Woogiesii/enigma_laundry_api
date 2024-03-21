@@ -15,6 +15,8 @@ type UsersUseCase interface {
 	FindById(id string) (model.Users, error)
 	LoginCustomer(in dto.LoginRequestDto) (dto.LoginResponseDto, error)
 	CreateCustomer(payload dto.UsersRequestDto) (model.Users, error)
+	UpdateCustomer(payload model.Users) (model.Users, error)
+	DeleteCustomer(id string) (model.Users, error)
 }
 
 type usersUseCase struct {
@@ -72,6 +74,22 @@ func (cst *usersUseCase) CreateCustomer(payload dto.UsersRequestDto) (model.User
 	}
 
 	return customers, nil
+}
+
+func (cst *usersUseCase) UpdateCustomer(payload model.Users) (model.Users, error) {
+	customer, err := cst.repo.Update(payload)
+	if err != nil {
+		return model.Users{}, err
+	}
+	return customer, nil
+}
+
+func (cst *usersUseCase) DeleteCustomer(id string) (model.Users, error) {
+	customer, err := cst.repo.Delete(id)
+	if err != nil {
+		return model.Users{}, err
+	}
+	return customer, nil
 }
 
 func NewUsersUseCase(repo repository.UsersRepository) UsersUseCase {
