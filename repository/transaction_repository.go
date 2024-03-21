@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"enigma_laundry_api/model"
+	"errors"
+	"fmt"
 	"time"
 )
 
@@ -20,7 +22,7 @@ func (t *transactionRepository) Create(payload model.Transaction) (model.Transac
 		return model.Transaction{}, err
 	}
 	var transaction model.Transaction
-
+	now := time.Now()
 	err = tx.QueryRow(`INSERT INTO tx_enigma_laundry
 	(id_users, id_services, transaction_in, transaction_out, amount, created_at, updated_at)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -30,8 +32,8 @@ func (t *transactionRepository) Create(payload model.Transaction) (model.Transac
 		payload.TransactionIn,
 		payload.TransactionOut,
 		payload.Amount,
-		time.Now(),
-		time.Now(),
+		now.Unix(),
+		now.Unix(),
 	).Scan(
 		&transaction.Id,
 		&transaction.Users,
@@ -45,7 +47,8 @@ func (t *transactionRepository) Create(payload model.Transaction) (model.Transac
 
 	if err != nil {
 		tx.Rollback()
-		return model.Transaction{}, err
+		errMsg := fmt.Sprintf("Error ON DB : %v", err)
+		return model.Transaction{}, errors.New(errMsg)
 	}
 
 	err = tx.Commit()
