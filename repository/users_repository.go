@@ -10,6 +10,8 @@ type UsersRepository interface {
 	Get(id string) (model.Users, error)
 	GetByUsername(username string) (model.Users, error)
 	Create(payload model.Users) (model.Users, error)
+	Update(payload model.Users) (model.Users, error)
+	Delete(id string) (model.Users, error)
 }
 
 type usersRepository struct {
@@ -62,6 +64,49 @@ func (cst *usersRepository) Create(payload model.Users) (model.Users, error) {
 		payload.Role,
 		time.Now(),
 	).Scan(
+		&customer.Id,
+		&customer.FullName,
+		&customer.PhoneNumber,
+		&customer.Username,
+		&customer.Password,
+		&customer.Role,
+		&customer.DateCreated,
+	)
+
+	if err != nil {
+		return model.Users{}, err
+	}
+	return customer, nil
+}
+
+func (cst *usersRepository) Update(payload model.Users) (model.Users, error) {
+	var customer model.Users
+	err := cst.db.QueryRow(`UPDATE mst_users SET customer_name = $1, phone_number = $2, username = $3, password = $4, role = $5 WHERE id = $6 RETURNING id, customer_name, phone_number, username, password, role, date_created`,
+		payload.FullName,
+		payload.PhoneNumber,
+		payload.Username,
+		payload.Password,
+		payload.Role,
+		payload.Id,
+	).Scan(
+		&customer.Id,
+		&customer.FullName,
+		&customer.PhoneNumber,
+		&customer.Username,
+		&customer.Password,
+		&customer.Role,
+		&customer.DateCreated,
+	)
+
+	if err != nil {
+		return model.Users{}, err
+	}
+	return customer, nil
+}
+
+func (cst *usersRepository) Delete(id string) (model.Users, error) {
+	var customer model.Users
+	err := cst.db.QueryRow(`DELETE FROM mst_users WHERE id = $1 RETURNING id, customer_name, phone_number, username, password, role, date_created`, id).Scan(
 		&customer.Id,
 		&customer.FullName,
 		&customer.PhoneNumber,

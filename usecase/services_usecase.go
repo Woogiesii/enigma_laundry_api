@@ -9,6 +9,8 @@ import (
 type ServicesUseCase interface {
 	FindById(id string) (model.Services, error)
 	CreateServices(payload model.Services) (model.Services, error)
+	UpdateServices(payload model.Services) (model.Services, error)
+	DeleteServices(id string) (model.Services, error)
 }
 
 type servicesUseCase struct {
@@ -36,6 +38,22 @@ func (serv *servicesUseCase) CreateServices(payload model.Services) (model.Servi
 		return model.Services{}, fmt.Errorf("failed to create services: %s", err.Error())
 	}
 	return services, nil
+}
+
+func (serv *servicesUseCase) UpdateServices(payload model.Services) (model.Services, error) {
+	updatedServices, err := serv.repo.Update(payload)
+	if err != nil {
+		return model.Services{}, fmt.Errorf("failed to update services: %s", err.Error())
+	}
+	return updatedServices, nil
+}
+
+func (serv *servicesUseCase) DeleteServices(id string) (model.Services, error) {
+	deletedServices, err := serv.repo.Delete(id)
+	if err != nil {
+		return model.Services{}, fmt.Errorf("failed to delete services: %s", err.Error())
+	}
+	return deletedServices, nil
 }
 
 func NewServicesUseCase(repo repository.ServicesRepository) ServicesUseCase {
