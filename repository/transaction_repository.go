@@ -1,0 +1,60 @@
+package repository
+
+import (
+	"database/sql"
+	"enigma_laundry_api/model"
+	"time"
+)
+
+type TransactionRepository interface {
+	Create(payload model.Transaction) (model.Transaction, error)
+}
+
+type transactionRepository struct {
+	db *sql.DB
+}
+
+func (t *transactionRepository) Create(payload model.Transaction) (model.Transaction, error) {
+	tx, err := t.db.Begin()
+	if err != nil {
+		return model.Transaction{}, err
+	}
+	var transaction model.Transaction
+
+	err = tx.QueryRow(`INSERT INTO tx_enigma_laundry
+	(id_users, id_services, transaction_in, transaction_out, amount, created_at, updated_at)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	RETURNING id, id_users, id_services, transaction_in, transaction_out, amount, created_at, updated_at`,
+		payload.Users,
+		payload.Services,
+		payload.TransactionIn,
+		payload.TransactionOut,
+		payload.Amount,
+		time.Now(),
+		time.Now(),
+	).Scan(
+		&transaction.Id,
+		&transaction.Users,
+		&transaction.Services,
+		&transaction.TransactionIn,
+		&transaction.TransactionOut,
+		&transaction.Amount,
+		&transaction.CreatedAt,
+		&transaction.UpdatedAt,
+	)
+
+	if err != nil {
+		tx.Rollback()
+		return model.Transaction{}, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return model.Transaction{}, err
+	}
+
+	return transaction, nil
+}
+func NewTransactionRepository(db *sql.DB) TransactionRepository {
+	return &transactionRepository{db: db}
+}
