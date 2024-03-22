@@ -3,7 +3,7 @@ package manager
 import "enigma_laundry_api/repository"
 
 type RepoManager interface {
-	CustomersRepo() repository.UsersRepository
+	UsersRepo() repository.UsersRepository
 	ServicesRepo() repository.ServicesRepository
 	TransactionRepo() repository.TransactionRepository
 }
@@ -12,7 +12,7 @@ type repoManager struct {
 	infra InfraManager
 }
 
-func (r *repoManager) CustomersRepo() repository.UsersRepository {
+func (r *repoManager) UsersRepo() repository.UsersRepository {
 	return repository.NewUsersRepository(r.infra.Conn())
 }
 

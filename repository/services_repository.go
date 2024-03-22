@@ -54,11 +54,16 @@ func (serv *servicesRepository) Create(payload model.Services) (model.Services, 
 
 func (serv *servicesRepository) Update(payload model.Services) (model.Services, error) {
 	var services model.Services
-	_, err := serv.db.Exec(`UPDATE mst_services SET service_name = $1, unit = $2, price = $3 WHERE id = $4 RETURNING id, service_name, unit, price`,
+	err := serv.db.QueryRow(`UPDATE mst_services SET service_name = $1, unit = $2, price = $3 WHERE id = $4 RETURNING id, service_name, unit, price`,
 		payload.ServiceName,
 		payload.Unit,
 		payload.Price,
 		payload.Id,
+	).Scan(
+		&services.Id,
+		&services.ServiceName,
+		&services.Unit,
+		&services.Price,
 	)
 
 	if err != nil {

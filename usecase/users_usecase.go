@@ -59,7 +59,7 @@ func (cst *usersUseCase) CreateCustomer(payload dto.UsersRequestDto) (model.User
 	if err != nil {
 		return model.Users{}, nil
 	}
-	newCustomers := model.Users{
+	newUsers := model.Users{
 		Id:          payload.Id,
 		FullName:    payload.FullName,
 		PhoneNumber: payload.PhoneNumber,
@@ -68,7 +68,7 @@ func (cst *usersUseCase) CreateCustomer(payload dto.UsersRequestDto) (model.User
 		Role:        payload.Role,
 	}
 
-	customers, err := cst.repo.Create(newCustomers)
+	customers, err := cst.repo.Create(newUsers)
 	if err != nil {
 		return model.Users{}, fmt.Errorf("failed to create customers: %s", err.Error())
 	}
@@ -77,7 +77,21 @@ func (cst *usersUseCase) CreateCustomer(payload dto.UsersRequestDto) (model.User
 }
 
 func (cst *usersUseCase) UpdateCustomer(payload model.Users) (model.Users, error) {
-	customer, err := cst.repo.Update(payload)
+	hashPassword, err := encryption.HashPassword(payload.Password)
+	if err != nil {
+		return model.Users{}, nil
+	}
+
+	updateUsers := model.Users{
+		Id:          payload.Id,
+		FullName:    payload.FullName,
+		PhoneNumber: payload.PhoneNumber,
+		Username:    payload.Username,
+		Password:    hashPassword,
+		Role:        payload.Role,
+	}
+
+	customer, err := cst.repo.Update(updateUsers)
 	if err != nil {
 		return model.Users{}, err
 	}

@@ -20,7 +20,7 @@ type usersRepository struct {
 
 func (cst *usersRepository) Get(id string) (model.Users, error) {
 	var customer model.Users
-	err := cst.db.QueryRow(`SELECT id, customer_name, phone_number, username, password, role, date_created FROM mst_users WHERE id = $1`, id).Scan(
+	err := cst.db.QueryRow(`SELECT id, full_name, phone_number, username, password, role, date_created FROM mst_users WHERE id = $1`, id).Scan(
 		&customer.Id,
 		&customer.FullName,
 		&customer.PhoneNumber,
@@ -39,7 +39,7 @@ func (cst *usersRepository) Get(id string) (model.Users, error) {
 
 func (cst *usersRepository) GetByUsername(username string) (model.Users, error) {
 	var customer model.Users
-	err := cst.db.QueryRow(`SELECT id, customer_name, phone_number, username, password, role, date_created FROM mst_users WHERE username = $1`, username).Scan(
+	err := cst.db.QueryRow(`SELECT id, full_name, phone_number, username, password, role, date_created FROM mst_users WHERE username = $1`, username).Scan(
 		&customer.Id,
 		&customer.FullName,
 		&customer.PhoneNumber,
@@ -56,7 +56,7 @@ func (cst *usersRepository) GetByUsername(username string) (model.Users, error) 
 
 func (cst *usersRepository) Create(payload model.Users) (model.Users, error) {
 	var customer model.Users
-	err := cst.db.QueryRow(`INSERT INTO mst_users (customer_name, phone_number, username, password, role, date_created) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, customer_name, phone_number, username, password, role, date_created`,
+	err := cst.db.QueryRow(`INSERT INTO mst_users (full_name, phone_number, username, password, role, date_created) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, full_name, phone_number, username, password, role, date_created`,
 		payload.FullName,
 		payload.PhoneNumber,
 		payload.Username,
@@ -81,7 +81,7 @@ func (cst *usersRepository) Create(payload model.Users) (model.Users, error) {
 
 func (cst *usersRepository) Update(payload model.Users) (model.Users, error) {
 	var customer model.Users
-	err := cst.db.QueryRow(`UPDATE mst_users SET customer_name = $1, phone_number = $2, username = $3, password = $4, role = $5 WHERE id = $6 RETURNING id, customer_name, phone_number, username, password, role, date_created`,
+	err := cst.db.QueryRow(`UPDATE mst_users SET full_name = $1, phone_number = $2, username = $3, password = $4, role = $5 WHERE id = $6 RETURNING id, full_name, phone_number, username, password, role, date_created`,
 		payload.FullName,
 		payload.PhoneNumber,
 		payload.Username,
@@ -106,7 +106,7 @@ func (cst *usersRepository) Update(payload model.Users) (model.Users, error) {
 
 func (cst *usersRepository) Delete(id string) (model.Users, error) {
 	var customer model.Users
-	err := cst.db.QueryRow(`DELETE FROM mst_users WHERE id = $1 RETURNING id, customer_name, phone_number, username, password, role, date_created`, id).Scan(
+	err := cst.db.QueryRow(`DELETE FROM mst_users WHERE id = $1 RETURNING id, full_name, phone_number, username, password, role, date_created`, id).Scan(
 		&customer.Id,
 		&customer.FullName,
 		&customer.PhoneNumber,

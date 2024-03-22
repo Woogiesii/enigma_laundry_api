@@ -85,10 +85,21 @@ func (tx *TransactionController) createHandler(ctx *gin.Context) {
 	common.SendCreateResponse(ctx, "OK", payloadResponse)
 }
 
+func (t *TransactionController) deleteHandler(ctx *gin.Context) {
+	id := ctx.Param("id")
+	response, err := t.uc.DeleteTransaction(id)
+	if err != nil {
+		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	common.SendCreateResponse(ctx, "OK", response)
+}
+
 func (tx *TransactionController) Route() {
 	transactionGroup := tx.rg.Group("/transaction")
 	{
 		transactionGroup.POST("", common.JWTAuth("ADMIN"), tx.createHandler)
+		transactionGroup.DELETE("/:id", common.JWTAuth("ADMIN"), tx.deleteHandler)
 		transactionGroup.POST("/login", middleware.BasicAuth(tx.apiCfg), tx.loginHandler)
 	}
 }
