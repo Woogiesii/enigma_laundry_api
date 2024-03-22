@@ -84,7 +84,7 @@ func (cst *CustomersController) deleteHandler(ctx *gin.Context) {
 }
 
 func (cst *CustomersController) Route() {
-	customersGroup := cst.rg.Group("/customers")
+	customersGroup := cst.rg.Group("/users")
 	{
 		customersGroup.GET("/:id", common.JWTAuth("ADMIN", "USER"), cst.getHandler)
 		customersGroup.POST("", common.JWTAuth("ADMIN"), cst.createHandler)
