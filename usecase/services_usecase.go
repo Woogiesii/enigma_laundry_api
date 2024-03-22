@@ -41,11 +41,18 @@ func (serv *servicesUseCase) CreateServices(payload model.Services) (model.Servi
 }
 
 func (serv *servicesUseCase) UpdateServices(payload model.Services) (model.Services, error) {
-	updatedServices, err := serv.repo.Update(payload)
-	if err != nil {
-		return model.Services{}, fmt.Errorf("failed to update services: %s", err.Error())
+	updateServices := model.Services{
+		Id:          payload.Id,
+		ServiceName: payload.ServiceName,
+		Unit:        payload.Unit,
+		Price:       payload.Price,
 	}
-	return updatedServices, nil
+
+	services, err := serv.repo.Update(updateServices)
+	if err != nil {
+		return model.Services{}, err
+	}
+	return services, nil
 }
 
 func (serv *servicesUseCase) DeleteServices(id string) (model.Services, error) {

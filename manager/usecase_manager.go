@@ -3,7 +3,7 @@ package manager
 import "enigma_laundry_api/usecase"
 
 type UseCaseManager interface {
-	CustomersUseCase() usecase.UsersUseCase
+	UsersUseCase() usecase.UsersUseCase
 	ServicesUseCase() usecase.ServicesUseCase
 	TransactionUseCase() usecase.TransactionUseCase
 }
@@ -12,8 +12,8 @@ type useCaseManager struct {
 	repo RepoManager
 }
 
-func (u *useCaseManager) CustomersUseCase() usecase.UsersUseCase {
-	return usecase.NewUsersUseCase(u.repo.CustomersRepo())
+func (u *useCaseManager) UsersUseCase() usecase.UsersUseCase {
+	return usecase.NewUsersUseCase(u.repo.UsersRepo())
 }
 
 func (u *useCaseManager) ServicesUseCase() usecase.ServicesUseCase {

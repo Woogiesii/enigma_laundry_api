@@ -19,9 +19,9 @@ type Server struct {
 
 func (s *Server) setupControllers() {
 	rg := s.engine.Group("/api/v1")
-	controller.NewCustomersController(s.ucManager.CustomersUseCase(), rg, s.apiCfg).Route()
+	controller.NewCustomersController(s.ucManager.UsersUseCase(), rg, s.apiCfg).Route()
 	controller.NewServicesController(s.ucManager.ServicesUseCase(), rg, s.apiCfg).Route()
-	controller.NewTransactionController(s.ucManager.TransactionUseCase(), s.ucManager.CustomersUseCase(), rg, s.apiCfg).Route()
+	controller.NewTransactionController(s.ucManager.TransactionUseCase(), s.ucManager.UsersUseCase(), rg, s.apiCfg).Route()
 }
 
 func (s *Server) Run() {

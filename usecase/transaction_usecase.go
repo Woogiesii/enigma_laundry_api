@@ -8,6 +8,7 @@ import (
 
 type TransactionUseCase interface {
 	RegisterTransaction(payload model.Transaction) (model.Transaction, error)
+	DeleteTransaction(id string) (model.Transaction, error)
 }
 
 type transactionUseCase struct {
@@ -28,6 +29,14 @@ func (t *transactionUseCase) RegisterTransaction(payload model.Transaction) (mod
 	transaction, err := t.repo.Create(newTransaction)
 	if err != nil {
 		return model.Transaction{}, fmt.Errorf("failed to create services: %s", err.Error())
+	}
+	return transaction, nil
+}
+
+func (t *transactionUseCase) DeleteTransaction(id string) (model.Transaction, error) {
+	transaction, err := t.repo.Delete(id)
+	if err != nil {
+		return model.Transaction{}, err
 	}
 	return transaction, nil
 }
